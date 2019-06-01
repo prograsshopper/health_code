@@ -30,6 +30,11 @@ DATABASES = {
     }
 }
 
+# Cors heaers
+CORS_ORIGIN_WHITELIST = (
+    '*',
+)
+
 # django-storages 앱 의존성 추가
 # 기본 static/media 저장소를 django-storages로 변경
 STATICFILES_STORAGE = 'health_code.storages.StaticS3Boto3Storage'
