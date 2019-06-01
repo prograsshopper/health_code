@@ -1,25 +1,36 @@
 from django.db import models
 
-# Create your models here.
-class User(models.model):
-    id = models.AutoField(primary_key=True)
-    email_id = models.EmailField(unique=True, max_length=75, default=None, null=True)  # Email Id
-    center_id = models.ForeignKey('center.Center', db_column='center_id')
-    name = models.CharField(max_length=30, default=None, null=True)
-    nick_name = models.CharField(max_length=30, default=None, null=True)
-    profile_img = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100)
-    phone = models.CharField(max_length=40, default=None, null=True)
-    is_staff = models.BooleanField(default=False)
-    create_date = models.DatetimeField(auto_now_add=True)
-    update_Date = models.DatetimeField(auto_now=True)
+
+class TimeStamp(models.Model):
+    created_datetime = models.DateTimeField(auto_now_add=True)
+    updated_datetime = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
 
 
-class Membership(models.model):
-    id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('User', db_column='user_id')
-    center_id = models.ForeignKey('center.Center', db_column='')
-    program_id = models.ForeignKey('center.Program', db_column='')
-    start_date = models.DatetimeField(auto_now_add=True)
-    end_date = models.DatetimeField(null=True)
-    create_date = models.DatetimeField(auto_now_add=True)
-    update_date = models.DatetimeField(auto_now=True)
+class CenterCategory(TimeStamp):
+    name = models.CharField(max_length=64)
+
+
+class Center(TimeStamp):
+    name = models.CharField(max_length=128, null=False, blank=False)
+    category = models.ForeignKey(CenterCategory,
+                                 on_delete=models.PROTECT)
+    phone = models.CharField(max_length=128, null=False, blank=False)
+    address = models.CharField(max_length=128, null=False, blank=False)
+    longitude = models.FloatField(null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    is_active = models.BooleanField(null=False, blank=True, default=True)
+    description = models.TextField(null=True, blank=True)
+
+
+class Program(TimeStamp):
+    center = models.ForeignKey(Center, on_delete=models.CASCADE)
+    name = models.CharField(max_length=128)
+    quota = models.IntegerField()
+    price = models.DecimalField(max_digits=12, decimal_places=2)
+    available = models.BooleanField(null=False, blank=False, default=True)
+    program_schedule = models.CharField(max_length=256)
+    description = models.TextField()
+    is_active = models.BooleanField(null=False, blank=False, default=True)
