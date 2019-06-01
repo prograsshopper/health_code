@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'account',
     'rest_framework',
     'easy_thumbnails',
-    'imagekit'
+    'imagekit',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [

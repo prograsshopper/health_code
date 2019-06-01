@@ -4,6 +4,8 @@ from django.http import JsonResponse
 from django.db import transaction
 from django.views.generic import View
 
+from rest_framework.authtoken.models import Token
+
 from account.models import User
 from center.models import Center
 
@@ -41,8 +43,9 @@ class SignupView(View):
                 )   
                 user.set_password(password)
                 user.save()
+                token = Token.objects.create(user=user)
             transaction.savepoint_commit(sid)
-            result = {'result':'success', 'error':'', 'error_msg':''}
+            result = {'result':'success', 'error':'', 'error_msg':'', 'token': token.key}
         except:
             traceback.print_exc()
             transaction.savepoint_rollback(sid)
@@ -58,4 +61,8 @@ class LoginView(View):
             result = {'result':'error', 'error': 'No Required Field', 'error_msg': 'Email, Password는 필수입니다.'}
             return JsonResponse(result)
         user = User.objects.filter(email=email).first()
+        if not user:
+            result = {'result':'error', 'error': 'No User', 'error_msg': '해당 유저가 존재하지 않습니다.'}
+            return JsonResponse(result)
         pass
+        
