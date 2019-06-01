@@ -1,4 +1,5 @@
 import pymysql
+import raven
 from .common import *
 
 
@@ -50,3 +51,19 @@ AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'ap-northeast-2')
+
+# sentry 연동하기
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+GIT_ROOT = BASE_DIR
+if os.path.exists(os.path.join(GIT_ROOT, '.git')):
+    release = raven.fetch_git_sha(GIT_ROOT)
+else:
+    release = 'basketcount-dev'
+
+RAVEN_CONFIG = {
+    'dsn': 'https://4f846d92204e4518a49fa88af9994bce:6fc4da2964d340078d0aec333d3197cc@sentry.io/1150448',
+    # If you are using git, you can also automatically configure the
+    # release based on the git info.
+    'release': release,
+}
