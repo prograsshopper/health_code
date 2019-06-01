@@ -28,13 +28,13 @@ class CenterViewSet(viewsets.GenericViewSet, ):
         return Response(self.serializer_class(center).data)
 
     @action(methods=['get'], detail=True)
-    def members(self):
+    def members(self, request, *args, **kwargs):
         users = Membership.objects.filter(center_id=self.kwargs['id']).all()
         page = self.paginate_queryset(users)
         return self.get_paginated_response(CenterSerializer(page, many=True).data)
 
     @action(methods=['get'], detail=True)
-    def programs(self):
+    def programs(self, request, *args, **kwargs):
         programs = Program.objects.filter(center_id=self.kwargs['id']).all()
         page = self.paginate_queryset(programs)
         return self.get_paginated_response(ProgramSerializer(page, many=True).data)
@@ -63,6 +63,7 @@ class ProgramViewSet(viewsets.GenericViewSet):
     lookup_field = 'id'
     serializer_class = ProgramSerializer
     pagination_class = LimitOffsetPagination
+    queryset = Program.objects.all()
 
     def retrieve(self, request, *args, **kwargs):
         try:
