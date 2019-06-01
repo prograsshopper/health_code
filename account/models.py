@@ -15,7 +15,7 @@ class User(AbstractUser):
 
 class Review(models.Model):
     membership = models.ForeignKey('center.Membership', on_delete=models.CASCADE,
-                               null=True, blank=True)
+                                   null=True, blank=True)
     title = models.CharField(max_length=200)
     content = models.TextField()
     point = models.IntegerField(blank=True, null=True)

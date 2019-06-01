@@ -1,15 +1,39 @@
 import traceback
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.db import transaction
 from django.views.generic import View
 from django.contrib.auth import login
+from rest_framework import viewsets, mixins
 
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
 from account.models import User
+from account.serializers import UserSerializer
 from center.models import Center
+
+
+class UsersViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
+    queryset = User.objects.all()
+    lookup_field = 'id'
+    serializer_class = UserSerializer
+    pagination_class = LimitOffsetPagination
+
+    def list(self, request):
+        users = self.queryset
+        page = self.paginate_queryset(users)
+        return self.get_paginated_response(self.serializer_class(page, many=True).data)
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            user = User.objects.get(id=self.kwargs['id'])
+        except ObjectDoesNotExist:
+            raise ValidationError({'detail': 'Unknown center.'})
+        return Response(self.serializer_class(user).data)
 
 
 class SignupView(View):
