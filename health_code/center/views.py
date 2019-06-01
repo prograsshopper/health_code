@@ -74,6 +74,12 @@ class ProgramViewSet(viewsets.GenericViewSet):
             raise ValidationError({'detail': 'Unknown Program.'})
         return Response(self.serializer_class(program).data)
 
+    @action(methods=['get'], detail=True)
+    def memberships(self, request, *args, **kwargs):
+        memberships = Membership.objects.filter(program_id=self.kwargs['id']).all()
+        page = self.paginate_queryset(memberships)
+        return self.get_paginated_response(MembershipSerializer(page, many=True).data)
+
 
 class MembershipViewSet(viewsets.GenericViewSet):
     lookup_field = 'id'
