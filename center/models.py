@@ -13,6 +13,9 @@ class CenterCategory(models.Model):
         for c in categories:
             CenterCategory.objects.create(name=c)
 
+    def __str__(self):
+        return self.name
+
 
 class Center(models.Model):
     name = models.CharField(max_length=128, null=False, blank=False)
@@ -27,6 +30,9 @@ class Center(models.Model):
     created_datetime = models.DateTimeField(auto_now_add=True)
     updated_datetime = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Program(models.Model):
     center = models.ForeignKey(Center, on_delete=models.CASCADE)
@@ -40,6 +46,9 @@ class Program(models.Model):
     created_datetime = models.DateTimeField(auto_now_add=True)
     updated_datetime = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Membership(models.Model):
     user = models.ForeignKey('account.User', on_delete=models.PROTECT)
@@ -49,3 +58,6 @@ class Membership(models.Model):
     end_date = models.DateTimeField(null=False, blank=False)
     created_datetime = models.DateTimeField(auto_now_add=True)
     updated_datetime = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.center.name} {self.user.name}님 회원권'
