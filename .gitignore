@@ -126,3 +126,6 @@ dmypy.json
 # pycharn
 
 .idea/
+
+# visual studio code
+__pycache__/
