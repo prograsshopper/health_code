@@ -31,9 +31,11 @@ DATABASES = {
 }
 
 # Cors heaers
-CORS_ORIGIN_WHITELIST = (
-    '*',
-)
+# CORS_ORIGIN_WHITELIST = (
+#     '*',
+# )
+CORS_ORIGIN_ALLOW_ALL = True
+
 
 # django-storages 앱 의존성 추가
 # 기본 static/media 저장소를 django-storages로 변경
