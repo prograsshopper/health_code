@@ -3,8 +3,10 @@ import traceback
 from django.http import JsonResponse
 from django.db import transaction
 from django.views.generic import View
+from django.contrib.auth import authenticate
 
 from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
 
 from account.models import User
 from center.models import Center
@@ -26,6 +28,8 @@ class SignupView(View):
             if not center:
                 result = {'result':'error', 'error': 'No Required Field', 'error_msg': '직원의 경우 센터 코드는 필수입니다.'}
             return JsonResponse(result)
+        else:
+            center = None
         name = request.data['name']
         nick_name = request.data['nick_name']
 
@@ -39,7 +43,10 @@ class SignupView(View):
                 user = User(
                     email=email,
                     phone=phone,
-                    is_partner=is_partner
+                    is_partner=is_partner,
+                    center=center,
+                    name=name,
+                    nick_name=nick_name
                 )   
                 user.set_password(password)
                 user.save()
@@ -57,12 +64,17 @@ class LoginView(View):
     def post(self, request):
         email = request.data['email']
         password = request.data['password']
+        
         if not email or password:
             result = {'result':'error', 'error': 'No Required Field', 'error_msg': 'Email, Password는 필수입니다.'}
             return JsonResponse(result)
         user = User.objects.filter(email=email).first()
         if not user:
             result = {'result':'error', 'error': 'No User', 'error_msg': '해당 유저가 존재하지 않습니다.'}
+            return JsonResponse(result)
+        pw_valid = user.check_password(password)
+        if not pw_valid:
+            result = {'result':'error', 'error': 'Invalid Password', 'error_msg': '비밀번호가 틀렸습니다.'}
             return JsonResponse(result)
         pass
         
