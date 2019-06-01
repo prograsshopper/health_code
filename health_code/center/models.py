@@ -36,8 +36,8 @@ class Program(models.Model):
 
 class Membership(models.Model):
     user = models.ForeignKey('account.User', on_delete=models.PROTECT)
-    center_id = models.ForeignKey('center.Center', on_delete=models.PROTECT)
-    program_id = models.ForeignKey('center.Program', on_delete=models.PROTECT)
+    center = models.ForeignKey('center.Center', on_delete=models.PROTECT)
+    program = models.ForeignKey('center.Program', on_delete=models.PROTECT)
     start_date = models.DateTimeField(null=False, blank=False)
     end_date = models.DateTimeField(null=False, blank=False)
     created_datetime = models.DateTimeField(auto_now_add=True)
