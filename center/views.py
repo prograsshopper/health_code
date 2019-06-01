@@ -1,10 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Center, Membership, CenterCategory, Program
@@ -18,8 +16,6 @@ class CenterViewSet(viewsets.GenericViewSet, ):
     serializer_class = CenterSerializer
     pagination_class = LimitOffsetPagination
     queryset = Center.objects.all()
-    permission_classes = (IsAuthenticated,)
-    authentication_classes = (TokenAuthentication, )
 
     def list(self, request):
         centers = self.queryset
