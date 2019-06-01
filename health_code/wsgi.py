@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'health_code.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'health_code.settings.prod_aws')
 
 application = get_wsgi_application()
