@@ -3,7 +3,8 @@ from django.db import models
 
 
 class User(AbstractUser):
-    center = models.ForeignKey('center.Center', on_delete=models.PROTECT)
+    center = models.ForeignKey('center.Center', on_delete=models.PROTECT,
+                               null=True, blank=True)
     name = models.CharField(max_length=30, null=False, blank=False)
     nick_name = models.CharField(max_length=30, null=False, blank=False)
     phone = models.CharField(max_length=40, null=True, blank=True)

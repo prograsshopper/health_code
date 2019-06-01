@@ -2,9 +2,16 @@ from django.db import models
 
 
 class CenterCategory(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
     created_datetime = models.DateTimeField(auto_now_add=True)
     updated_datetime = models.DateTimeField(auto_now=True)
+
+    @staticmethod
+    def initial_migrate():
+        categories = ['수영', '필라테스', '헬스', 'PT', '크로스핏', '요가',
+                      '에어로빅']
+        for c in categories:
+            CenterCategory.objects.create(name=c)
 
 
 class Center(models.Model):
