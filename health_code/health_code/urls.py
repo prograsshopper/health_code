@@ -16,12 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from health_code.views import main
+from .views import main
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main),
-    path('users/', include('user.urls')),
-    path('center/', include('center.urls')),
+    # path('users/', include('user.urls')),
+    # path('center/', include('center.urls')),
 ]
