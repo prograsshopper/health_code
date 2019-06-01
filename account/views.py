@@ -3,7 +3,7 @@ import traceback
 from django.http import JsonResponse
 from django.db import transaction
 from django.views.generic import View
-from django.contrib.auth import authenticate
+from django.contrib.auth import login
 
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -50,9 +50,8 @@ class SignupView(View):
                 )   
                 user.set_password(password)
                 user.save()
-                token = Token.objects.create(user=user)
             transaction.savepoint_commit(sid)
-            result = {'result':'success', 'error':'', 'error_msg':'', 'token': token.key}
+            result = {'result':'success', 'error':'', 'error_msg':''}
         except:
             traceback.print_exc()
             transaction.savepoint_rollback(sid)
@@ -76,5 +75,7 @@ class LoginView(View):
         if not pw_valid:
             result = {'result':'error', 'error': 'Invalid Password', 'error_msg': '비밀번호가 틀렸습니다.'}
             return JsonResponse(result)
-        pass
-        
+        login(request, user)
+        token, token_created = Token.objects.get_or_create(user=user)
+        result = {'result':'success', 'error':'', 'error_msg':'', 'token': token.key}
+        return JsonResponse(result)
