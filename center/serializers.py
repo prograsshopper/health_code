@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import CenterCategory, Center, Program, Membership
+from account.serializers import UserSerializer
 
 
 class CenterCategorySerializer(serializers.ModelSerializer):
@@ -24,7 +25,9 @@ class ProgramSerializer(serializers.ModelSerializer):
 
 
 class MembershipSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = Membership
-        fields = ('id', 'user_id', 'center_id', 'program_id', 'start_date', 'end_date',
+        fields = ('id', 'user',  'center_id', 'program_id', 'start_date', 'end_date',
                   'created_datetime', 'updated_datetime')
