@@ -2,3 +2,7 @@ django==2.1
 django-imagekit==4.0.2
 Pillow==4.3.0
 djangorestframework==3.9.4
+easy-thumbnails==2.5
+django-storages==1.6.5
+boto3==1.5.14
+PyMySQL==0.8.0

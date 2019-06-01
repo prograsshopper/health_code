@@ -22,7 +22,7 @@ DATABASES = {
         'USER': os.environ['DB_USER'],
         'PASSWORD': os.environ['DB_PASSWORD'],
         'NAME': os.environ['DB_NAME'],
-        'PORT': os.environ['DB_PORT'],
+        'PORT': os.environ.get(['DB_PORT'], 3306),
         'ATOMIC_REQUESTS': True,
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
