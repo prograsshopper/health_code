@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'health_code',
     'user',
     'center',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
