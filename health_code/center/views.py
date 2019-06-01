@@ -6,7 +6,9 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
 from .models import Center, Membership, CenterCategory, Program
-from .serializers import CenterSerializer, CenterCategorySerializer, ProgramSerializer
+from .serializers import (
+    CenterSerializer, CenterCategorySerializer, ProgramSerializer, MembershipSerializer
+)
 
 
 class CenterViewSet(viewsets.GenericViewSet, ):
@@ -71,3 +73,17 @@ class ProgramViewSet(viewsets.GenericViewSet):
         except ObjectDoesNotExist:
             raise ValidationError({'detail': 'Unknown Program.'})
         return Response(self.serializer_class(program).data)
+
+
+class MembershipViewSet(viewsets.GenericViewSet):
+    lookup_field = 'id'
+    serializer_class = MembershipSerializer
+    pagination_class = LimitOffsetPagination
+    queryset = Membership.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            membership = Membership.objects.get(id=self.kwargs['id'])
+        except ObjectDoesNotExist:
+            ValidationError({'detail': 'Unknown Membership'})
+        return Response(self.serializer_class(membership).data)
