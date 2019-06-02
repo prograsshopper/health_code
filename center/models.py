@@ -1,4 +1,6 @@
 from django.db import models
+from imagekit.models import ProcessedImageField
+from imagekit.processors import Thumbnail
 
 
 class CenterCategory(models.Model):
@@ -21,6 +23,14 @@ class Center(models.Model):
     name = models.CharField(max_length=128, null=False, blank=False)
     category = models.ForeignKey(CenterCategory,
                                  on_delete=models.PROTECT)
+    main_image = ProcessedImageField(
+        blank=True,
+        null=True,
+        upload_to='center/center/%Y/%M/%D',
+        processors=[Thumbnail(1000, 1000)],
+        format='JPEG',
+        options={'quality': 60}
+    )
     phone = models.CharField(max_length=128, null=False, blank=False)
     address = models.CharField(max_length=128, null=False, blank=False)
     longitude = models.FloatField(null=True, blank=True)
@@ -35,6 +45,14 @@ class Center(models.Model):
 
 
 class Program(models.Model):
+    main_image = ProcessedImageField(
+        blank=True,
+        null=True,
+        upload_to='center/center/%Y/%M/%D',
+        processors=[Thumbnail(1000, 1000)],
+        format='JPEG',
+        options={'quality': 60}
+    )
     center = models.ForeignKey(Center, on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
     quota = models.IntegerField()
