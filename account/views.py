@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.db import transaction
 from django.views.generic import View
-from django.contrib.auth import login
+from django.contrib.auth import login as django_login
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
@@ -84,24 +84,24 @@ class UsersViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
         return JsonResponse(result)
 
 
-class LoginView(View):
-    @method_decorator(csrf_exempt)
-    def post(self, request):
-        email = request.data['email']
-        password = request.data['password']
-        
-        if not email or password:
-            result = {'result':'error', 'error': 'No Required Field', 'error_msg': 'Email, Password는 필수입니다.'}
-            return JsonResponse(result)
-        user = User.objects.filter(email=email).first()
-        if not user:
-            result = {'result':'error', 'error': 'No User', 'error_msg': '해당 유저가 존재하지 않습니다.'}
-            return JsonResponse(result)
-        pw_valid = user.check_password(password)
-        if not pw_valid:
-            result = {'result':'error', 'error': 'Invalid Password', 'error_msg': '비밀번호가 틀렸습니다.'}
-            return JsonResponse(result)
-        login(request, user)
-        token, token_created = Token.objects.get_or_create(user=user)
-        result = {'result':'success', 'error':'', 'error_msg':'', 'token': token.key}
+
+@csrf_exempt
+def login(request):
+    email = request.POST.get('email')
+    password = request.POST.get('password')
+    
+    if not email or not password:
+        result = {'result':'error', 'error': 'No Required Field', 'error_msg': 'Email, Password는 필수입니다.'}
         return JsonResponse(result)
+    user = User.objects.filter(email=email).first()
+    if not user:
+        result = {'result':'error', 'error': 'No User', 'error_msg': '해당 유저가 존재하지 않습니다.'}
+        return JsonResponse(result)
+    pw_valid = user.check_password(password)
+    if not pw_valid:
+        result = {'result':'error', 'error': 'Invalid Password', 'error_msg': '비밀번호가 틀렸습니다.'}
+        return JsonResponse(result)
+    django_login(request, user)
+    token, token_created = Token.objects.get_or_create(user=user)
+    result = {'result':'success', 'error':'', 'error_msg':'', 'token': token.key}
+    return JsonResponse(result)
