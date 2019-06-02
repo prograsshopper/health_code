@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Avg
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -18,7 +19,20 @@ class CenterViewSet(viewsets.GenericViewSet, ):
     queryset = Center.objects.all()
 
     def list(self, request):
-        centers = self.queryset
+        # query_price = request.Get.get('price', '')
+        query_category = request.Get.get('category', '')
+        query_address = request.Get.get('address', '')
+
+        centers = Center.objects
+
+        if query_category:
+            centers = centers.filter(category__name=query_category)
+
+        if query_address:
+            centers = centers.filter(address__contains=query_address)
+
+        centers = centers.all()
+
         page = self.paginate_queryset(centers)
         return self.get_paginated_response(self.serializer_class(page, many=True).data)
 
