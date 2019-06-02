@@ -20,8 +20,8 @@ class CenterViewSet(viewsets.GenericViewSet, ):
 
     def list(self, request):
         # query_price = request.Get.get('price', '')
-        query_category = request.Get.get('category', '')
-        query_address = request.Get.get('address', '')
+        query_category = request.GET.get('category', '')
+        query_address = request.GET.get('address', '')
 
         centers = Center.objects
 
