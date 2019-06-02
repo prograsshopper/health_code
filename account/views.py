@@ -118,9 +118,3 @@ class ReviewViewSet(viewsets.GenericViewSet, ):
         except ObjectDoesNotExist:
             raise ValidationError({'detail': 'Unknown center.'})
         return Response(self.serializer_class(review).data)
-    
-    @action(methods=['get'], detail=True)
-    def center_reviews(self, request, *args, **kwargs):
-        reviews = Center.objects.filter(center_id=self.kwargs['center_id']).all()
-        page = self.paginate_queryset(reviews)
-        return self.get_paginated_response(ReviewSerializer(page, many=True).data)
