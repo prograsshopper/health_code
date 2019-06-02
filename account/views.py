@@ -13,9 +13,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
-from account.models import User
-from account.serializers import UserSerializer
+from account.models import User, Review
+from account.serializers import UserSerializer, ReviewSerializer
 from center.models import Center
 
 
@@ -84,7 +85,6 @@ class UsersViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
         return JsonResponse(result)
 
 
-
 @csrf_exempt
 def login(request):
     email = request.POST.get('email')
@@ -105,3 +105,22 @@ def login(request):
     token, token_created = Token.objects.get_or_create(user=user)
     result = {'result':'success', 'error':'', 'error_msg':'', 'token': token.key}
     return JsonResponse(result)
+
+class ReviewViewSet(viewsets.GenericViewSet, ):
+    lookup_field = 'id'
+    serializer_class = ReviewSerializer
+    pagination_class = LimitOffsetPagination
+    queryset = Review.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            review = Review.objects.get(id=self.kwargs['id'])
+        except ObjectDoesNotExist:
+            raise ValidationError({'detail': 'Unknown center.'})
+        return Response(self.serializer_class(review).data)
+    
+    @action(methods=['get'], detail=True)
+    def center_reviews(self, request, *args, **kwargs):
+        reviews = Center.objects.filter(center_id=self.kwargs['center_id']).all()
+        page = self.paginate_queryset(reviews)
+        return self.get_paginated_response(ReviewSerializer(page, many=True).data)
