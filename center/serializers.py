@@ -13,7 +13,7 @@ class CenterCategorySerializer(serializers.ModelSerializer):
 class CenterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Center
-        fields = ('id', 'name', 'main_img', 'category', 'phone', 'address', 'longitude', 'latitude', 'is_active',
+        fields = ('id', 'name', 'main_image', 'category', 'phone', 'address', 'longitude', 'latitude', 'is_active',
                   'description', 'created_datetime', 'updated_datetime')
 
 
