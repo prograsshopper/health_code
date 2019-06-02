@@ -10,5 +10,4 @@ router.register(r'users', views.UsersViewSet)
 
 urlpatterns = [
     path(r'', include(router.urls)),
-    path('signup/', views.SignupView.as_view()),
 ]

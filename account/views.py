@@ -5,8 +5,10 @@ from django.http import JsonResponse
 from django.db import transaction
 from django.views.generic import View
 from django.contrib.auth import login
-from rest_framework import viewsets, mixins
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
+from rest_framework import viewsets, mixins
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import LimitOffsetPagination
@@ -34,28 +36,26 @@ class UsersViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
         except ObjectDoesNotExist:
             raise ValidationError({'detail': 'Unknown center.'})
         return Response(self.serializer_class(user).data)
-
-
-class SignupView(View):
-    def post(self, request):
-        email = request.data['email']
-        password = request.data['password']
-        if not email or password:
-            result = {'result':'error', 'error': 'No Required Field', 'error_msg': 'Email, Password는 필수입니다.'}
+    
+    def create(self, request, *args, **kwargs):
+        email = request.POST.get('email', '')
+        password = request.POST.get('password', '')
+        name = request.POST.get('name', '')
+        if not email or not password or not name:
+            result = {'result':'error', 'error': 'No Required Field', 'error_msg': 'Email, Password, Name은 필수입니다.'}
             return JsonResponse(result)
-        phone = request.data['phone']
-        is_partner = request.data['is_partner']
+        phone = request.POST.get('phone', '')
+        is_partner = request.POST.get('is_partner', '')
         is_partner = True if is_partner == 'true' else False
         if is_partner:
-            center = request.data['center']
+            center = request.POST.get('center', '')
             center = Center.objects.filter(id=center).first()
             if not center:
                 result = {'result':'error', 'error': 'No Required Field', 'error_msg': '직원의 경우 센터 코드는 필수입니다.'}
             return JsonResponse(result)
         else:
             center = None
-        name = request.data['name']
-        nick_name = request.data['nick_name']
+        nick_name = request.POST.get('nick_name', '')
 
         user = User.objects.filter(email=email).first()
         if user:
@@ -65,6 +65,7 @@ class SignupView(View):
         try:
             with transaction.atomic():
                 user = User(
+                    username=email,
                     email=email,
                     phone=phone,
                     is_partner=is_partner,
@@ -84,6 +85,7 @@ class SignupView(View):
 
 
 class LoginView(View):
+    @method_decorator(csrf_exempt)
     def post(self, request):
         email = request.data['email']
         password = request.data['password']
