@@ -33,7 +33,7 @@ class CenterViewSet(viewsets.GenericViewSet, ):
     def members(self, request, *args, **kwargs):
         users = Membership.objects.filter(center_id=self.kwargs['id']).all()
         page = self.paginate_queryset(users)
-        return self.get_paginated_response(CenterSerializer(page, many=True).data)
+        return self.get_paginated_response(MembershipSerializer(page, many=True).data)
 
     @action(methods=['get'], detail=True)
     def programs(self, request, *args, **kwargs):
