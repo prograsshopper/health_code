@@ -1,4 +1,4 @@
-django==2.1
+django==2.2.24
 django-imagekit==4.0.2
 Pillow==4.3.0
 djangorestframework==3.9.4
